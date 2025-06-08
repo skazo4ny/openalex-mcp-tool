@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "openalex-explorer": {
+      "url": "https://YOUR-USERNAME-openalex-mcp-tool.hf.space/gradio_api/mcp/sse"
+    }
+  }
+}
