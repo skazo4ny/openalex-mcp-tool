@@ -38,7 +38,7 @@ This project is built for the **Agents & MCP Hackathon (June 2-10, 2025)** and p
 The project is organized into modular components:
 
 ```
-/openalex_mcp_tool
+/openalex-mcp-tool
 ├── app.py                     # Main Gradio app & MCP server logic
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # This file
