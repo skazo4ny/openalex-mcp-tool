@@ -108,14 +108,13 @@ class OpenAlexAuthorRetriever:
             Processed author data or None if not found
         """
         try:
-            # Use filter to get specific author
+            # Use filter to get specific author by ID
             response = self.api_client.search_authors(
                 query="",  # Empty query since we're filtering by ID
+                filters={'openalex_id': openalex_id},
                 per_page=1
             )
             
-            # For this simplified implementation, we'll use the search endpoint
-            # In a full implementation, you'd use a dedicated get endpoint
             authors = response.get('results', [])
             if authors:
                 return self._process_author_data(authors[0])

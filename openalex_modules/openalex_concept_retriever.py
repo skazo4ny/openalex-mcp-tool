@@ -78,10 +78,10 @@ class OpenAlexConceptRetriever:
             Processed concept data or None if not found
         """
         try:
-            # For this simplified implementation, we'll use the search endpoint
-            # In a full implementation, you'd use a dedicated get endpoint
+            # Use filter to get specific concept by ID
             response = self.api_client.search_concepts(
                 query="",  # Empty query since we're filtering by ID
+                filters={'openalex_id': openalex_id},
                 per_page=1
             )
             

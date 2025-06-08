@@ -56,13 +56,13 @@ class OpenAlexPublicationRetriever:
             # Build filters
             filters = {}
             
-            if start_year or end_year:
-                year_filter = []
-                if start_year:
-                    year_filter.append(f">={start_year}")
-                if end_year:
-                    year_filter.append(f"<={end_year}")
-                filters['publication_year'] = year_filter
+            if start_year and end_year:
+                # Use proper OpenAlex year range format
+                filters['publication_year'] = f"{start_year}-{end_year}"
+            elif start_year:
+                filters['publication_year'] = f">={start_year}"
+            elif end_year:
+                filters['publication_year'] = f"<={end_year}"
             
             # Search for works
             response = self.api_client.search_works(

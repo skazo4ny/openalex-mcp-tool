@@ -61,7 +61,7 @@ def search_openalex_papers(
     max_results: int = 3,
     start_year: Optional[int] = None,
     end_year: Optional[int] = None
-) -> str:
+) -> List[Dict[str, Any]]:
     """
     Searches OpenAlex for academic papers by query, with optional date filtering.
     
@@ -72,7 +72,7 @@ def search_openalex_papers(
         end_year: Optional end year for filtering
     
     Returns:
-        Formatted string with paper details
+        List of structured paper data dictionaries
     """
     start_time = time.time()
     args = {
@@ -96,24 +96,23 @@ def search_openalex_papers(
         logger.log_performance("search_openalex_papers", duration, 
                               results_count=len(results) if results else 0)
         
-        formatted_results = format_paper_results(results)
         logger.log_mcp_call("search_openalex_papers", args, {
             'success': True,
             'results_count': len(results) if results else 0,
-            'response_length': len(formatted_results)
+            'response_length': len(results) if results else 0
         })
         
-        return formatted_results
+        return results or []
         
     except Exception as e:
         duration = time.time() - start_time
         logger.log_performance("search_openalex_papers", duration, error=True)
         logger.log_mcp_call("search_openalex_papers", args, error=str(e))
         logger.log_error(e, "search_openalex_papers")
-        return f"Error searching papers: {str(e)}"
+        return []
 
 
-def get_publication_by_doi(doi: str) -> str:
+def get_publication_by_doi(doi: str) -> Optional[Dict[str, Any]]:
     """
     Retrieves a specific OpenAlex publication by its DOI.
     
@@ -121,7 +120,7 @@ def get_publication_by_doi(doi: str) -> str:
         doi: Digital Object Identifier of the publication
     
     Returns:
-        Formatted string with publication details
+        Structured publication data dictionary or None if not found
     """
     start_time = time.time()
     args = {'doi': doi}
@@ -133,31 +132,30 @@ def get_publication_by_doi(doi: str) -> str:
         duration = time.time() - start_time
         
         if result:
-            formatted_result = format_paper_results([result])
             logger.log_performance("get_publication_by_doi", duration, found=True)
             logger.log_mcp_call("get_publication_by_doi", args, {
                 'success': True,
                 'found': True,
-                'response_length': len(formatted_result)
+                'response_length': 1
             })
-            return formatted_result
+            return result
         else:
             logger.log_performance("get_publication_by_doi", duration, found=False)
             logger.log_mcp_call("get_publication_by_doi", args, {
                 'success': True,
                 'found': False
             })
-            return f"No publication found for DOI: {doi}"
+            return None
             
     except Exception as e:
         duration = time.time() - start_time
         logger.log_performance("get_publication_by_doi", duration, error=True)
         logger.log_mcp_call("get_publication_by_doi", args, error=str(e))
         logger.log_error(e, "get_publication_by_doi")
-        return f"Error retrieving publication: {str(e)}"
+        return None
 
 
-def search_openalex_authors(author_name: str, max_results: int = 5) -> str:
+def search_openalex_authors(author_name: str, max_results: int = 5) -> List[Dict[str, Any]]:
     """
     Searches OpenAlex for authors by their name.
     
@@ -166,7 +164,7 @@ def search_openalex_authors(author_name: str, max_results: int = 5) -> str:
         max_results: Maximum number of results to return (default: 5)
     
     Returns:
-        Formatted string with author details
+        List of structured author data dictionaries
     """
     start_time = time.time()
     args = {'author_name': author_name, 'max_results': max_results}
@@ -183,24 +181,23 @@ def search_openalex_authors(author_name: str, max_results: int = 5) -> str:
         logger.log_performance("search_openalex_authors", duration,
                               results_count=len(results) if results else 0)
         
-        formatted_results = format_author_results(results)
         logger.log_mcp_call("search_openalex_authors", args, {
             'success': True,
             'results_count': len(results) if results else 0,
-            'response_length': len(formatted_results)
+            'response_length': len(results) if results else 0
         })
         
-        return formatted_results
+        return results or []
         
     except Exception as e:
         duration = time.time() - start_time
         logger.log_performance("search_openalex_authors", duration, error=True)
         logger.log_mcp_call("search_openalex_authors", args, error=str(e))
         logger.log_error(e, "search_openalex_authors")
-        return f"Error searching authors: {str(e)}"
+        return []
 
 
-def search_openalex_concepts(concept_name: str, max_results: int = 5) -> str:
+def search_openalex_concepts(concept_name: str, max_results: int = 5) -> List[Dict[str, Any]]:
     """
     Searches OpenAlex for concepts (fields of study) by name.
     
@@ -209,7 +206,7 @@ def search_openalex_concepts(concept_name: str, max_results: int = 5) -> str:
         max_results: Maximum number of results to return (default: 5)
     
     Returns:
-        Formatted string with concept details
+        List of structured concept data dictionaries
     """
     start_time = time.time()
     args = {'concept_name': concept_name, 'max_results': max_results}
@@ -226,21 +223,20 @@ def search_openalex_concepts(concept_name: str, max_results: int = 5) -> str:
         logger.log_performance("search_openalex_concepts", duration,
                               results_count=len(results) if results else 0)
         
-        formatted_results = format_concept_results(results)
         logger.log_mcp_call("search_openalex_concepts", args, {
             'success': True,
             'results_count': len(results) if results else 0,
-            'response_length': len(formatted_results)
+            'response_length': len(results) if results else 0
         })
         
-        return formatted_results
+        return results or []
         
     except Exception as e:
         duration = time.time() - start_time
         logger.log_performance("search_openalex_concepts", duration, error=True)
         logger.log_mcp_call("search_openalex_concepts", args, error=str(e))
         logger.log_error(e, "search_openalex_concepts")
-        return f"Error searching concepts: {str(e)}"
+        return []
 
 
 def format_paper_results(papers: List[Dict[str, Any]]) -> str:
@@ -316,6 +312,43 @@ def format_concept_results(concepts: List[Dict[str, Any]]) -> str:
     return '\n'.join(formatted)
 
 
+# Wrapper functions for Gradio UI (convert structured data to formatted strings)
+def search_papers_ui(search_query: str, max_results: int = 3, start_year: Optional[int] = None, end_year: Optional[int] = None) -> str:
+    """UI wrapper for search_openalex_papers that returns formatted string."""
+    try:
+        results = search_openalex_papers(search_query, max_results, start_year, end_year)
+        return format_paper_results(results)
+    except Exception as e:
+        return f"Error searching papers: {str(e)}"
+
+def get_paper_by_doi_ui(doi: str) -> str:
+    """UI wrapper for get_publication_by_doi that returns formatted string."""
+    try:
+        result = get_publication_by_doi(doi)
+        if result:
+            return format_paper_results([result])
+        else:
+            return f"No publication found for DOI: {doi}"
+    except Exception as e:
+        return f"Error retrieving publication: {str(e)}"
+
+def search_authors_ui(author_name: str, max_results: int = 5) -> str:
+    """UI wrapper for search_openalex_authors that returns formatted string."""
+    try:
+        results = search_openalex_authors(author_name, max_results)
+        return format_author_results(results)
+    except Exception as e:
+        return f"Error searching authors: {str(e)}"
+
+def search_concepts_ui(concept_name: str, max_results: int = 5) -> str:
+    """UI wrapper for search_openalex_concepts that returns formatted string."""
+    try:
+        results = search_openalex_concepts(concept_name, max_results)
+        return format_concept_results(results)
+    except Exception as e:
+        return f"Error searching concepts: {str(e)}"
+
+
 # Create Gradio interface
 def create_gradio_interface():
     """Create the Gradio web interface."""
@@ -337,7 +370,7 @@ def create_gradio_interface():
             papers_output = gr.Textbox(label="Results", lines=10)
             
             search_button.click(
-                search_openalex_papers,
+                search_papers_ui,
                 inputs=[query_input, max_results_input, start_year_input, end_year_input],
                 outputs=papers_output
             )
@@ -348,7 +381,7 @@ def create_gradio_interface():
             doi_output = gr.Textbox(label="Paper Details", lines=10)
             
             doi_button.click(
-                get_publication_by_doi,
+                get_paper_by_doi_ui,
                 inputs=doi_input,
                 outputs=doi_output
             )
@@ -360,7 +393,7 @@ def create_gradio_interface():
             authors_output = gr.Textbox(label="Authors", lines=10)
             
             author_button.click(
-                search_openalex_authors,
+                search_authors_ui,
                 inputs=[author_input, author_max_input],
                 outputs=authors_output
             )
@@ -372,7 +405,7 @@ def create_gradio_interface():
             concepts_output = gr.Textbox(label="Concepts", lines=10)
             
             concept_button.click(
-                search_openalex_concepts,
+                search_concepts_ui,
                 inputs=[concept_input, concept_max_input],
                 outputs=concepts_output
             )

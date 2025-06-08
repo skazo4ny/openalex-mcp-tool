@@ -16,8 +16,8 @@ source venv/bin/activate
 # Check if OPENALEX_EMAIL is set
 if [ -z "$OPENALEX_EMAIL" ]; then
     echo "⚠️  Warning: OPENALEX_EMAIL environment variable is not set."
-    echo "   For better API access, please set it:"
-    echo "   export OPENALEX_EMAIL=\"your.email@example.com\""
+    echo "   Setting default email: gradio@gradio.ai"
+    export OPENALEX_EMAIL="gradio@gradio.ai"
     echo ""
 fi
 
