@@ -87,7 +87,7 @@ class OpenAlexAPIClient:
                     time.sleep(wait_time)
     
     def search_works(self, query: str, filters: Optional[Dict[str, Any]] = None, 
-                    per_page: int = None, page: int = 1) -> Dict[str, Any]:
+                    per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
         """
         Search for works (publications) in OpenAlex.
         
@@ -111,7 +111,15 @@ class OpenAlexAPIClient:
             filter_strings = []
             for key, value in filters.items():
                 if isinstance(value, list):
-                    filter_strings.append(f"{key}:{'|'.join(map(str, value))}")
+                    # Handle year range filters properly
+                    if key == 'publication_year' and len(value) == 2:
+                        # Convert ['>=2020', '<=2024'] to year range format
+                        start_val = value[0].replace('>=', '') if value[0].startswith('>=') else value[0]
+                        end_val = value[1].replace('<=', '') if value[1].startswith('<=') else value[1]
+                        filter_strings.append(f"{key}:{start_val}-{end_val}")
+                    else:
+                        # Use + for OR within same key (OpenAlex format)
+                        filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
                 else:
                     filter_strings.append(f"{key}:{value}")
             
@@ -146,12 +154,14 @@ class OpenAlexAPIClient:
                 return None
             raise
     
-    def search_authors(self, query: str, per_page: int = None, page: int = 1) -> Dict[str, Any]:
+    def search_authors(self, query: str, filters: Optional[Dict[str, Any]] = None,
+                      per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
         """
         Search for authors in OpenAlex.
         
         Args:
             query: Search query string
+            filters: Additional filters to apply
             per_page: Number of results per page
             page: Page number
         
@@ -164,14 +174,28 @@ class OpenAlexAPIClient:
             'per-page': min(per_page or self.default_per_page, self.max_per_page)
         }
         
+        # Add filters
+        if filters:
+            filter_strings = []
+            for key, value in filters.items():
+                if isinstance(value, list):
+                    filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                else:
+                    filter_strings.append(f"{key}:{value}")
+            
+            if filter_strings:
+                params['filter'] = ','.join(filter_strings)
+        
         return self._make_request('/authors', params)
     
-    def search_concepts(self, query: str, per_page: int = None, page: int = 1) -> Dict[str, Any]:
+    def search_concepts(self, query: str, filters: Optional[Dict[str, Any]] = None,
+                       per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
         """
         Search for concepts in OpenAlex.
         
         Args:
             query: Search query string
+            filters: Additional filters to apply
             per_page: Number of results per page
             page: Page number
         
@@ -183,6 +207,18 @@ class OpenAlexAPIClient:
             'page': page,
             'per-page': min(per_page or self.default_per_page, self.max_per_page)
         }
+        
+        # Add filters
+        if filters:
+            filter_strings = []
+            for key, value in filters.items():
+                if isinstance(value, list):
+                    filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                else:
+                    filter_strings.append(f"{key}:{value}")
+            
+            if filter_strings:
+                params['filter'] = ','.join(filter_strings)
         
         return self._make_request('/concepts', params)
     
