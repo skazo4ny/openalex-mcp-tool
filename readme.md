@@ -1,3 +1,22 @@
+---
+title: OpenAlex Explorer MCP Server
+emoji: 📚
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: "5.9.1"
+app_file: app.py
+pinned: false
+license: mit
+tags:
+  - mcp-server
+  - openalex
+  - academic-research
+  - scientific-papers
+  - model-context-protocol
+  - hackathon
+---
+
 # OpenAlex Explorer: Gradio MCP Server
 
 **Hackathon Tag:** `mcp-server-track`
