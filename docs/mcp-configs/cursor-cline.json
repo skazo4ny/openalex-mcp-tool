@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "openalex-explorer": {
+      "url": "http://localhost:7860/gradio_api/mcp/sse"
+    }
+  }
+}

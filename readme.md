@@ -25,6 +25,7 @@ A dual-purpose application that provides both a **Gradio web interface** and **M
 ## 🚀 Live Demo
 
 **Try it now**: [https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool](https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool)
+**Video Demo Link**: https://youtu.be/XJNCQ5J2yPM 
 
 ## 🎯 Core Features
 

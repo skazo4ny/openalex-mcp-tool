@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "openalex-explorer": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://localhost:7860/gradio_api/mcp/sse"
+      ]
+    }
+  }
+}
