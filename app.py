@@ -7,28 +7,53 @@ and an MCP server for OpenAlex API interactions.
 
 import gradio as gr
 import os
+import sys
+import time
 from typing import Optional, List, Dict, Any
-import logging
+from datetime import datetime
 
 # Import our modules
 from slr_modules.config_manager import ConfigManager
 from slr_modules.api_clients import OpenAlexAPIClient
+from slr_modules.logger import get_logger, setup_logging
 from openalex_modules.openalex_publication_retriever import OpenAlexPublicationRetriever
 from openalex_modules.openalex_author_retriever import OpenAlexAuthorRetriever
 from openalex_modules.openalex_concept_retriever import OpenAlexConceptRetriever
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Set up enhanced logging
+logger = setup_logging("openalex_mcp", "logs")
+
+# Log application startup
+app_info = {
+    'python_version': sys.version,
+    'gradio_version': gr.__version__,
+    'working_directory': os.getcwd(),
+    'environment_vars': {
+        'OPENALEX_EMAIL': os.getenv('OPENALEX_EMAIL', 'NOT_SET'),
+        'HF_SPACE': os.getenv('HF_SPACE', 'local')
+    }
+}
+logger.log_startup(app_info)
 
 # Initialize configuration and API client
-config_manager = ConfigManager()
-api_client = OpenAlexAPIClient(config_manager)
-
-# Initialize retrievers
-publication_retriever = OpenAlexPublicationRetriever(api_client)
-author_retriever = OpenAlexAuthorRetriever(api_client)
-concept_retriever = OpenAlexConceptRetriever(api_client)
+try:
+    logger.info("Initializing configuration manager")
+    config_manager = ConfigManager()
+    
+    logger.info("Initializing OpenAlex API client")
+    api_client = OpenAlexAPIClient(config_manager)
+    
+    # Initialize retrievers
+    logger.info("Initializing data retrievers")
+    publication_retriever = OpenAlexPublicationRetriever(api_client)
+    author_retriever = OpenAlexAuthorRetriever(api_client)
+    concept_retriever = OpenAlexConceptRetriever(api_client)
+    
+    logger.info("All components initialized successfully")
+    
+except Exception as e:
+    logger.log_error(e, "Application initialization")
+    raise
 
 
 def search_openalex_papers(
@@ -49,6 +74,16 @@ def search_openalex_papers(
     Returns:
         Formatted string with paper details
     """
+    start_time = time.time()
+    args = {
+        'search_query': search_query,
+        'max_results': max_results,
+        'start_year': start_year,
+        'end_year': end_year
+    }
+    
+    logger.info(f"MCP Tool called: search_openalex_papers", **args)
+    
     try:
         results = publication_retriever.search_publications(
             query=search_query,
@@ -56,9 +91,25 @@ def search_openalex_papers(
             start_year=start_year,
             end_year=end_year
         )
-        return format_paper_results(results)
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_papers", duration, 
+                              results_count=len(results) if results else 0)
+        
+        formatted_results = format_paper_results(results)
+        logger.log_mcp_call("search_openalex_papers", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(formatted_results)
+        })
+        
+        return formatted_results
+        
     except Exception as e:
-        logger.error(f"Error searching papers: {e}")
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_papers", duration, error=True)
+        logger.log_mcp_call("search_openalex_papers", args, error=str(e))
+        logger.log_error(e, "search_openalex_papers")
         return f"Error searching papers: {str(e)}"
 
 
@@ -72,14 +123,37 @@ def get_publication_by_doi(doi: str) -> str:
     Returns:
         Formatted string with publication details
     """
+    start_time = time.time()
+    args = {'doi': doi}
+    
+    logger.info(f"MCP Tool called: get_publication_by_doi", doi=doi)
+    
     try:
         result = publication_retriever.get_by_doi(doi)
+        duration = time.time() - start_time
+        
         if result:
-            return format_paper_results([result])
+            formatted_result = format_paper_results([result])
+            logger.log_performance("get_publication_by_doi", duration, found=True)
+            logger.log_mcp_call("get_publication_by_doi", args, {
+                'success': True,
+                'found': True,
+                'response_length': len(formatted_result)
+            })
+            return formatted_result
         else:
+            logger.log_performance("get_publication_by_doi", duration, found=False)
+            logger.log_mcp_call("get_publication_by_doi", args, {
+                'success': True,
+                'found': False
+            })
             return f"No publication found for DOI: {doi}"
+            
     except Exception as e:
-        logger.error(f"Error retrieving publication by DOI: {e}")
+        duration = time.time() - start_time
+        logger.log_performance("get_publication_by_doi", duration, error=True)
+        logger.log_mcp_call("get_publication_by_doi", args, error=str(e))
+        logger.log_error(e, "get_publication_by_doi")
         return f"Error retrieving publication: {str(e)}"
 
 
@@ -94,14 +168,35 @@ def search_openalex_authors(author_name: str, max_results: int = 5) -> str:
     Returns:
         Formatted string with author details
     """
+    start_time = time.time()
+    args = {'author_name': author_name, 'max_results': max_results}
+    
+    logger.info(f"MCP Tool called: search_openalex_authors", **args)
+    
     try:
         results = author_retriever.search_authors(
             name=author_name,
             max_results=max_results
         )
-        return format_author_results(results)
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_authors", duration,
+                              results_count=len(results) if results else 0)
+        
+        formatted_results = format_author_results(results)
+        logger.log_mcp_call("search_openalex_authors", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(formatted_results)
+        })
+        
+        return formatted_results
+        
     except Exception as e:
-        logger.error(f"Error searching authors: {e}")
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_authors", duration, error=True)
+        logger.log_mcp_call("search_openalex_authors", args, error=str(e))
+        logger.log_error(e, "search_openalex_authors")
         return f"Error searching authors: {str(e)}"
 
 
@@ -116,14 +211,35 @@ def search_openalex_concepts(concept_name: str, max_results: int = 5) -> str:
     Returns:
         Formatted string with concept details
     """
+    start_time = time.time()
+    args = {'concept_name': concept_name, 'max_results': max_results}
+    
+    logger.info(f"MCP Tool called: search_openalex_concepts", **args)
+    
     try:
         results = concept_retriever.search_concepts(
             name=concept_name,
             max_results=max_results
         )
-        return format_concept_results(results)
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_concepts", duration,
+                              results_count=len(results) if results else 0)
+        
+        formatted_results = format_concept_results(results)
+        logger.log_mcp_call("search_openalex_concepts", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(formatted_results)
+        })
+        
+        return formatted_results
+        
     except Exception as e:
-        logger.error(f"Error searching concepts: {e}")
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_concepts", duration, error=True)
+        logger.log_mcp_call("search_openalex_concepts", args, error=str(e))
+        logger.log_error(e, "search_openalex_concepts")
         return f"Error searching concepts: {str(e)}"
 
 
@@ -272,10 +388,30 @@ def create_gradio_interface():
 
 
 if __name__ == "__main__":
-    # Check if email is set
-    if not os.getenv('OPENALEX_EMAIL'):
-        logger.warning("OPENALEX_EMAIL environment variable not set. Please set it for better API access.")
-    
-    # Create and launch the Gradio app
-    app = create_gradio_interface()
-    app.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    try:
+        # Check if email is set
+        if not os.getenv('OPENALEX_EMAIL'):
+            logger.warning("OPENALEX_EMAIL environment variable not set", 
+                          recommendation="Set OPENALEX_EMAIL for better API access")
+        else:
+            logger.info("OPENALEX_EMAIL is configured", 
+                       email=os.getenv('OPENALEX_EMAIL'))
+        
+        # Create and launch the Gradio app
+        logger.info("Creating Gradio interface")
+        app = create_gradio_interface()
+        
+        # Log launch details
+        launch_config = {
+            'server_name': "0.0.0.0",
+            'server_port': 7860,
+            'share': False,
+            'mcp_endpoint': "http://0.0.0.0:7860/gradio_api/mcp/sse"
+        }
+        logger.info("Launching Gradio application", **launch_config)
+        
+        app.launch(server_name="0.0.0.0", server_port=7860, share=False)
+        
+    except Exception as e:
+        logger.log_error(e, "Application launch")
+        raise
