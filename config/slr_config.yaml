@@ -1,0 +1,22 @@
+# OpenAlex Explorer Configuration
+# This file contains non-sensitive configuration settings
+
+openalex:
+  base_url: "https://api.openalex.org"
+  default_per_page: 25
+  max_per_page: 200
+  timeout: 30
+  retries: 3
+
+search:
+  default_max_results: 10
+  max_allowed_results: 50
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+app:
+  title: "OpenAlex Explorer"
+  description: "MCP Server for OpenAlex API interactions"
+  version: "1.0.0"
