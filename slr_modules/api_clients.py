@@ -113,13 +113,13 @@ class OpenAlexAPIClient:
                 if isinstance(value, list):
                     # Handle year range filters properly
                     if key == 'publication_year' and len(value) == 2:
-                        # Convert ['>=2020', '<=2024'] to year range format
-                        start_val = value[0].replace('>=', '') if value[0].startswith('>=') else value[0]
-                        end_val = value[1].replace('<=', '') if value[1].startswith('<=') else value[1]
+                        # Convert ['>=2020', '<=2024'] or ['2020', '2024'] to OpenAlex year range format
+                        start_val = value[0].replace('>=', '').strip() if isinstance(value[0], str) and value[0].startswith('>=') else str(value[0]).strip()
+                        end_val = value[1].replace('<=', '').strip() if isinstance(value[1], str) and value[1].startswith('<=') else str(value[1]).strip()
                         filter_strings.append(f"{key}:{start_val}-{end_val}")
                     else:
-                        # Use + for OR within same key (OpenAlex format)
-                        filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                        # Use | for OR within same key (OpenAlex format, not +)
+                        filter_strings.append(f"{key}:{'|'.join(map(str, value))}")
                 else:
                     filter_strings.append(f"{key}:{value}")
             

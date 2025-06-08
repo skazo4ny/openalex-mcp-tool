@@ -57,8 +57,8 @@ class OpenAlexPublicationRetriever:
             filters = {}
             
             if start_year and end_year:
-                # Use year range format for OpenAlex API
-                filters['publication_year'] = [f">={start_year}", f"<={end_year}"]
+                # Use proper OpenAlex year range format
+                filters['publication_year'] = f"{start_year}-{end_year}"
             elif start_year:
                 filters['publication_year'] = f">={start_year}"
             elif end_year:

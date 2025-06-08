@@ -43,7 +43,7 @@ class TestOpenAlexPublicationRetriever:
             
             mock_search.assert_called_once_with(
                 query="machine learning",
-                filters={'publication_year': ['>=2020', '<=2024']},
+                filters={'publication_year': '2020-2024'},
                 per_page=10
             )
     

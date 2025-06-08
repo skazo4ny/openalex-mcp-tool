@@ -126,7 +126,7 @@ class TestOpenAlexAPIClient:
                 'search': 'machine learning',
                 'page': 1,
                 'per-page': 10,
-                'filter': 'type:article+review'
+                'filter': 'type:article|review'
             })
     
     def test_get_work_by_doi_success(self, api_client, mock_work_response):
