@@ -61,12 +61,12 @@ emoji: 📚
 colorFrom: blue
 colorTo: green
 sdk: gradio
-sdk_version: 5.33.0
+sdk_version: 4.0.0
 app_file: app.py
 pinned: false
 license: mit
 tags:
-  - mcp
+  - mcp-server-track
   - openalex
   - academic-research
   - model-context-protocol
@@ -164,36 +164,26 @@ The `config/slr_config.yaml` file should contain:
 # OpenAlex API Configuration
 openalex:
   base_url: "https://api.openalex.org"
-  rate_limit: 100  # requests per second
-  timeout: 30      # seconds
-  retry_attempts: 3
-  retry_delay: 1   # seconds
+  default_per_page: 25
+  max_per_page: 200
+  timeout: 30
+  retries: 3
+
+# Search Configuration
+search:
+  default_max_results: 10
+  max_allowed_results: 50
 
 # Application Configuration
 app:
-  debug: false
-  log_level: "INFO"
-  max_results: 50
-  default_results: 10
-
-# Gradio Configuration
-gradio:
-  interface:
-    title: "OpenAlex Explorer MCP Server"
-    description: "Search academic papers, authors, and concepts"
-    theme: "default"
-  server:
-    port: 7860
-    host: "0.0.0.0"
-    share: false
+  title: "OpenAlex Explorer"
+  description: "MCP Server for OpenAlex API interactions"
+  version: "1.0.0"
 
 # Logging Configuration
 logging:
   level: "INFO"
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file_rotation: "daily"
-  max_log_files: 30
-  log_directory: "logs"
 ```
 
 ### Environment Variables
@@ -307,7 +297,6 @@ python -c "import yaml; yaml.safe_load(open('config/slr_config.yaml'))"
 The application generates structured logs in `/logs` directory:
 
 - `app_YYYY-MM-DD.json` - JSON formatted logs
-- `app_YYYY-MM-DD.xml` - XML formatted logs
 
 Use log analysis tools:
 

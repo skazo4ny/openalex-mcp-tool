@@ -54,7 +54,7 @@ This application enables:
 **Detailed Requirements**:
 - **FR-001.1**: Accept natural language search queries for academic papers
 - **FR-001.2**: Support filtering by publication year range (start_year, end_year)
-- **FR-001.3**: Return configurable number of results (default: 10, max: 50)
+- **FR-001.3**: Return configurable number of results (default: 3, max: 50)
 - **FR-001.4**: Include paper metadata: title, DOI, abstract, authors, publication year
 - **FR-001.5**: Handle OpenAlex inverted-index abstract format and convert to readable text
 - **FR-001.6**: Return structured data suitable for LLM consumption
@@ -77,7 +77,7 @@ This application enables:
 **Detailed Requirements**:
 - **FR-003.1**: Search authors by name (partial matching supported)
 - **FR-003.2**: Return author metadata: name, affiliation, OpenAlex ID
-- **FR-003.3**: Support configurable result limits (default: 10, max: 25)
+- **FR-003.3**: Support configurable result limits (default: 5, max: 25)
 - **FR-003.4**: Handle authors with multiple affiliations
 - **FR-003.5**: Provide author disambiguation information when available
 

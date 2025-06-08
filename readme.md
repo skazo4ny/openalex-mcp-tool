@@ -88,8 +88,8 @@ async def search_ai_papers():
     async with Client("sse", url=url) as client:
         result = await client.call_tool("search_openalex_papers", {
             "query": "large language models",
-            "from_publication_date": "2023-01-01",
-            "results_count": 5
+            "start_year": 2023,
+            "max_results": 5
         })
         
         print(result.content[0].text)
@@ -101,10 +101,10 @@ asyncio.run(search_ai_papers())
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `search_openalex_papers` | Find academic papers | `query`, `from_publication_date`, `to_publication_date`, `results_count` |
+| `search_openalex_papers` | Find academic papers | `query`, `start_year`, `end_year`, `max_results` |
 | `get_publication_by_doi` | Get specific paper | `doi` |
-| `search_openalex_authors` | Find researchers | `query`, `results_count` |
-| `search_openalex_concepts` | Explore topics | `query`, `results_count` |
+| `search_openalex_authors` | Find researchers | `query`, `max_results` |
+| `search_openalex_concepts` | Explore topics | `query`, `max_results` |
 
 ## 🎥 Demo Video
 
@@ -169,7 +169,7 @@ requests>=2.31.0
 **Recent AI Research:**
 ```
 Query: "transformer neural networks"
-Date: 2023-01-01 to 2024-12-31
+Years: 2023 to 2024
 ```
 
 **Climate Science:**

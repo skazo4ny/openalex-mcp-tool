@@ -7,7 +7,7 @@ The OpenAlex Explorer MCP Server provides both a Gradio web interface and MCP (M
 ## Base URLs
 
 - **Web Interface**: Available at deployment URL (e.g., Hugging Face Spaces)
-- **MCP Server**: Accessible via stdio transport for MCP clients
+- **MCP Server**: Accessible via SSE (Server-Sent Events) at `YOUR_APP_URL/gradio_api/mcp/sse`
 
 ## MCP Tools
 
@@ -24,22 +24,24 @@ Search for academic papers using various criteria.
       "type": "string",
       "description": "Search query for papers (title, abstract, keywords)"
     },
-    "from_publication_date": {
-      "type": "string",
-      "description": "Start date filter (YYYY-MM-DD format)",
-      "format": "date"
+    "start_year": {
+      "type": "integer",
+      "description": "Start year filter (e.g., 2020)",
+      "minimum": 1950,
+      "maximum": 2030
     },
-    "to_publication_date": {
-      "type": "string", 
-      "description": "End date filter (YYYY-MM-DD format)",
-      "format": "date"
+    "end_year": {
+      "type": "integer", 
+      "description": "End year filter (e.g., 2024)",
+      "minimum": 1950,
+      "maximum": 2030
     },
-    "results_count": {
+    "max_results": {
       "type": "integer",
       "description": "Number of results to return (1-50)",
       "minimum": 1,
       "maximum": 50,
-      "default": 10
+      "default": 3
     }
   },
   "required": ["query"]
@@ -83,12 +85,12 @@ Search for authors in the OpenAlex database.
       "type": "string",
       "description": "Author name or search query"
     },
-    "results_count": {
+    "max_results": {
       "type": "integer",
-      "description": "Number of results to return (1-50)",
+      "description": "Number of results to return (1-25)",
       "minimum": 1,
-      "maximum": 50,
-      "default": 10
+      "maximum": 25,
+      "default": 5
     }
   },
   "required": ["query"]
@@ -111,12 +113,12 @@ Search for academic concepts and their relationships.
       "type": "string",
       "description": "Concept name or search query"
     },
-    "results_count": {
+    "max_results": {
       "type": "integer",
       "description": "Number of results to return (1-50)",
       "minimum": 1,
       "maximum": 50,
-      "default": 10
+      "default": 5
     }
   },
   "required": ["query"]
@@ -159,25 +161,25 @@ No authentication required for OpenAlex API access. The service uses the public 
 
 ## Examples
 
-### Using with MCP Client
-
+### Example: Search Recent AI Papers
 ```python
-import mcp
+import asyncio
+from mcp import Client
 
-# Connect to MCP server via SSE
-client = mcp.Client("sse", url="http://localhost:7860/gradio_api/mcp/sse")
+async def search_ai_papers():
+    url = "http://localhost:7860/gradio_api/mcp/sse"
+    
+    async with Client("sse", url=url) as client:
+        result = await client.call_tool("search_openalex_papers", {
+            "query": "machine learning",
+            "start_year": 2020,
+            "max_results": 5
+        })
+        
+        print(result.content[0].text)
 
-# Search for papers
-result = await client.call_tool("search_openalex_papers", {
-    "query": "machine learning",
-    "from_publication_date": "2020-01-01",
-    "results_count": 5
-})
-
-print(result.content[0].text)
+asyncio.run(search_ai_papers())
 ```
-
-**Note**: Replace `localhost:7860` with your actual deployment URL (e.g., Hugging Face Spaces URL).
 
 ### Direct Web Interface
 
@@ -193,4 +195,4 @@ The server maintains comprehensive logs:
 - Request/response logging for all MCP calls
 - Performance metrics and timing
 - Error tracking with stack traces
-- Daily log rotation in JSON and XML formats
+- Daily log rotation in JSON format

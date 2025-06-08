@@ -24,8 +24,8 @@ Navigate to the deployment URL (e.g., your Hugging Face Spaces URL) to access th
 #### 1. Paper Search Tab
 - **Query Field**: Enter search terms for papers (title, abstract, keywords)
 - **Date Filters**: 
-  - From Date: Start of publication date range (YYYY-MM-DD)
-  - To Date: End of publication date range (YYYY-MM-DD)
+  - Start Year: Beginning year for publication date range (e.g., 2020)
+  - End Year: Ending year for publication date range (e.g., 2024)
 - **Results Count**: Number of papers to return (1-50)
 - **Search Button**: Execute the search
 
@@ -144,9 +144,9 @@ asyncio.run(main())
 # Search for recent AI papers
 await client.call_tool("search_openalex_papers", {
     "query": "artificial intelligence",
-    "from_publication_date": "2023-01-01",
-    "to_publication_date": "2023-12-31",
-    "results_count": 10
+    "start_year": 2020,
+    "end_year": 2023,
+    "max_results": 10
 })
 ```
 
@@ -163,7 +163,7 @@ await client.call_tool("get_publication_by_doi", {
 # Find AI researchers
 await client.call_tool("search_openalex_authors", {
     "query": "Geoffrey Hinton",
-    "results_count": 5
+    "max_results": 5
 })
 ```
 
@@ -172,7 +172,7 @@ await client.call_tool("search_openalex_authors", {
 # Explore research concepts
 await client.call_tool("search_openalex_concepts", {
     "query": "machine learning",
-    "results_count": 10
+    "max_results": 10
 })
 ```
 
@@ -257,8 +257,8 @@ await client.call_tool("search_openalex_concepts", {
 # Systematic search for recent papers
 papers = await search_papers({
     "query": "systematic review machine learning healthcare",
-    "from_publication_date": "2020-01-01",
-    "results_count": 50
+    "start_year": 2020,
+    "max_results": 50
 })
 ```
 
@@ -268,7 +268,7 @@ papers = await search_papers({
 # Find leading researchers in a field
 authors = await search_authors({
     "query": "deep learning computer vision",
-    "results_count": 20
+    "max_results": 20
 })
 ```
 
