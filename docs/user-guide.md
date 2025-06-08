@@ -107,13 +107,13 @@ Add to your Claude Desktop configuration:
 {
   "mcpServers": {
     "openalex-explorer": {
-      "command": "python",
-      "args": ["/path/to/openalex-mcp-tool/app.py"],
-      "env": {}
+      "url": "http://localhost:7860/gradio_api/mcp/sse"
     }
   }
 }
 ```
+
+**Note**: Replace `localhost:7860` with your deployment URL for production use.
 
 #### Custom MCP Client
 
@@ -122,8 +122,8 @@ import asyncio
 from mcp import Client
 
 async def main():
-    # Connect to the server
-    async with Client("stdio", ["python", "/path/to/app.py"]) as client:
+    # Connect to the server via SSE
+    async with Client("sse", url="http://localhost:7860/gradio_api/mcp/sse") as client:
         # Search for papers
         result = await client.call_tool("search_openalex_papers", {
             "query": "artificial intelligence",

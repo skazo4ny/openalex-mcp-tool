@@ -32,12 +32,12 @@ Welcome to the OpenAlex Explorer MCP Server documentation! This project provides
 {
   "mcpServers": {
     "openalex-explorer": {
-      "command": "python",
-      "args": ["/path/to/app.py"]
+      "url": "http://localhost:7860/gradio_api/mcp/sse"
     }
   }
 }
 ```
+**Note**: For Hugging Face Spaces deployment, replace `localhost:7860` with your Space URL.
 
 #### Available MCP Tools
 - `search_openalex_papers` - Search academic papers

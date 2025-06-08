@@ -54,7 +54,7 @@ This application enables:
 **Detailed Requirements**:
 - **FR-001.1**: Accept natural language search queries for academic papers
 - **FR-001.2**: Support filtering by publication year range (start_year, end_year)
-- **FR-001.3**: Return configurable number of results (default: 3, max: 20)
+- **FR-001.3**: Return configurable number of results (default: 10, max: 50)
 - **FR-001.4**: Include paper metadata: title, DOI, abstract, authors, publication year
 - **FR-001.5**: Handle OpenAlex inverted-index abstract format and convert to readable text
 - **FR-001.6**: Return structured data suitable for LLM consumption
@@ -77,7 +77,7 @@ This application enables:
 **Detailed Requirements**:
 - **FR-003.1**: Search authors by name (partial matching supported)
 - **FR-003.2**: Return author metadata: name, affiliation, OpenAlex ID
-- **FR-003.3**: Support configurable result limits (default: 5, max: 20)
+- **FR-003.3**: Support configurable result limits (default: 10, max: 25)
 - **FR-003.4**: Handle authors with multiple affiliations
 - **FR-003.5**: Provide author disambiguation information when available
 
@@ -132,7 +132,7 @@ This application enables:
 
 ### NFR-003: Maintainability
 - **NFR-003.1**: Modular architecture with clear separation of concerns
-- **NFR-003.2**: Comprehensive logging with multiple formats (JSON, XML)
+- **NFR-003.2**: Comprehensive logging with structured format (JSON preferred)
 - **NFR-003.3**: Configuration management via YAML files and environment variables
 - **NFR-003.4**: Clear code documentation and type hints
 
@@ -141,18 +141,18 @@ This application enables:
 ## Technical Requirements
 
 ### TR-001: Programming Language and Framework
-- **Primary Language**: Python 3.11+
-- **Web Framework**: Gradio 5.33.0+ with MCP support
+- **Primary Language**: Python 3.9+
+- **Web Framework**: Gradio 4.x with MCP support (targeting Gradio 5.x compatibility)
 - **API Client**: PyAlex for OpenAlex integration
 - **Configuration**: PyYAML for configuration management
 
 ### TR-002: Dependencies
 ```
-gradio[mcp]>=5.33.0
+gradio[mcp]>=4.0.0
 pyalex>=0.13
 PyYAML>=6.0
+python-dotenv>=1.0.0
 requests>=2.31.0
-typing-extensions>=4.0.0
 ```
 
 ### TR-003: Architecture Requirements
@@ -271,10 +271,10 @@ typing-extensions>=4.0.0
 - **DEP-002.4**: Health check and monitoring endpoints
 
 ### DEP-003: Logging and Monitoring
-- **DEP-003.1**: Structured logging in JSON and XML formats
+- **DEP-003.1**: Structured logging in JSON format
 - **DEP-003.2**: Daily log rotation
 - **DEP-003.3**: Performance metrics collection
-- **DEP-003.4**: Error tracking and alerting
+- **DEP-003.4**: Error tracking and monitoring
 
 ---
 

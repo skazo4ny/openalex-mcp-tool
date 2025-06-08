@@ -164,8 +164,8 @@ No authentication required for OpenAlex API access. The service uses the public 
 ```python
 import mcp
 
-# Connect to MCP server
-client = mcp.Client("stdio", command=["python", "app.py"])
+# Connect to MCP server via SSE
+client = mcp.Client("sse", url="http://localhost:7860/gradio_api/mcp/sse")
 
 # Search for papers
 result = await client.call_tool("search_openalex_papers", {
@@ -176,6 +176,8 @@ result = await client.call_tool("search_openalex_papers", {
 
 print(result.content[0].text)
 ```
+
+**Note**: Replace `localhost:7860` with your actual deployment URL (e.g., Hugging Face Spaces URL).
 
 ### Direct Web Interface
 

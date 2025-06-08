@@ -2,161 +2,206 @@
 title: OpenAlex Explorer MCP Server
 emoji: 📚
 colorFrom: blue
-colorTo: purple
+colorTo: green
 sdk: gradio
-sdk_version: "5.33.0"
+sdk_version: 4.0.0
 app_file: app.py
 pinned: false
 license: mit
 tags:
-  - mcp-server
+  - mcp-server-track
   - openalex
   - academic-research
-  - scientific-papers
   - model-context-protocol
-  - hackathon
+  - gradio
 ---
 
-# OpenAlex Explorer: Gradio MCP Server
+# 📚 OpenAlex Explorer MCP Server
 
-**Hackathon Tag:** `mcp-server-track`
+**🏆 Agents & MCP Hackathon Submission (June 2-10, 2025)**
 
-**Demo Video:** [Link to our video recording of the MCP server in action] (e.g., YouTube, Loom, or a link to another Gradio Space acting as a client)
-*(Will replace this with the actual link to our demo video!)*
+A dual-purpose application that provides both a **Gradio web interface** and **MCP (Model Context Protocol) server** for accessing academic research data from the OpenAlex API. Perfect for AI agents that need to search papers, authors, and academic concepts.
 
-## Project Description
+## 🚀 Live Demo
 
-OpenAlex Explorer is a Gradio application that serves as a powerful Model Context Protocol (MCP) tool for interacting with the [OpenAlex](https://openalex.org/) scholarly database. It allows Language Models (LLMs) and other MCP clients to easily search for academic papers, authors, and concepts, and retrieve specific publications by DOI.
+**Try it now**: [https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool](https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool)
 
-This tool aims to provide a standardized and accessible way for AI agents to leverage the rich, interconnected data within OpenAlex, enabling them to ground their responses in scientific literature, find relevant research, and understand scholarly trends.
+## 🎯 Core Features
 
-This project is built for the **Agents & MCP Hackathon (June 2-10, 2025)** and participates in Track 1: MCP Tool / Server.
+### 🔍 **Four MCP Tools**
+1. **`search_openalex_papers`** - Search academic papers with date filtering
+2. **`get_publication_by_doi`** - Retrieve specific publications by DOI  
+3. **`search_openalex_authors`** - Find authors and their metrics
+4. **`search_openalex_concepts`** - Explore academic concepts and fields
 
-**Based on and inspired by:** This project leverages and adapts components from the [tsi-sota-ai](https://github.com/skazo4nick/tsi-sota-ai) repository, particularly its modules for OpenAlex API interaction.
-
-## Features
-
-*   **MCP Server Functionality**: Exposes OpenAlex search capabilities as tools for MCP clients.
-*   **Search Academic Papers**: Query OpenAlex for publications based on keywords, with optional filtering by publication year.
-*   **Retrieve Publication by DOI**: Fetch specific paper details using its Digital Object Identifier.
-*   **Search Authors**: Find authors in OpenAlex by name.
-*   **Search Concepts**: Discover academic concepts (fields of study) by name.
-*   **User-Friendly Gradio UI**: Provides a web interface for direct interaction and testing of the search functionalities.
-*   **Standardized Output**: Returns structured data (title, DOI, abstract, authors, keywords, etc.) suitable for LLM consumption.
-*   **Abstract Reconstruction**: Handles OpenAlex's inverted-index abstract format to provide full abstracts.
-
-## Tech Stack
-
-*   Python 3.x
-*   Gradio (with `gradio[mcp]`)
-*   Pyalex (for OpenAlex API interaction)
-*   PyYAML (for configuration management)
-
-## Project Structure
-
-The project is organized into modular components:
-
-```
-/openalex-mcp-tool
-├── app.py                     # Main Gradio app & MCP server logic
-├── requirements.txt           # Python dependencies
-├── README.md                  # This file
-├── config/
-│   └── slr_config.yaml        # Configuration file (primarily for non-sensitive settings)
-├── slr_modules/               # Adapted modules from tsi-sota-ai
-│   ├── __init__.py
-│   ├── api_clients.py         # Contains the OpenAlexAPIClient
-│   └── config_manager.py      # Handles configuration loading
-└── openalex_modules/          # Specific OpenAlex interaction modules
-    ├── __init__.py
-    ├── openalex_author_retriever.py
-    ├── openalex_publication_retriever.py
-    ├── openalex_concept_retriever.py
-    └── openalex_utils.py      # Utility functions for OpenAlex data
-```
-
-## Setup and Running Locally
-
-1.  **Clone the Repository (or create from files):**
-    ```bash
-    # If it's a Git repo:
-    # git clone https://your-repo-url.git
-    # cd openalex_mcp_tool
-    ```
-
-2.  **Create a Virtual Environment (Recommended):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
-
-3.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  **Set Environment Variable:**
-    For polite and reliable access to the OpenAlex API, you **must** set your email address as an environment variable:
-    ```bash
-    export OPENALEX_EMAIL="your.email@example.com"
-    ```
-    (On Windows, use `set OPENALEX_EMAIL=your.email@example.com` or set it through system properties). This email is used in the `User-Agent` header for `pyalex` calls.
-
-5.  **Run the Gradio App:**
-    ```bash
-    python app.py
-    ```
-    The application will start, and you'll see a local URL in the console (e.g., `http://127.0.0.1:7860`).
-
-## Using as an MCP Server
-
-Once the Gradio app is running (either locally or deployed on Hugging Face Spaces), it exposes its functionalities as MCP tools.
-
-1.  **MCP Server URL:**
-    *   **Local:** `http://127.0.0.1:7860/gradio_api/mcp/sse` (or your local port)
-    *   **Hugging Face Space:** `https://YOUR_USERNAME-YOUR_SPACE_NAME.hf.space/gradio_api/mcp/sse`
-
-2.  **Configure Your MCP Client:**
-    Add the MCP Server URL to your MCP client's configuration (e.g., Tiny Agents, Claude Desktop, Cursor). Example configuration:
-    ```json
-    {
-      "mcpServers": {
-        "openalex_explorer": { // You can name this key as you like
-          "url": "YOUR_MCP_SERVER_URL_HERE"
-        }
-      }
+### 🤖 **MCP Integration**
+Connect your AI agents to academic research:
+```json
+{
+  "mcpServers": {
+    "openalex-explorer": {
+      "url": "https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool/gradio_api/mcp/sse"
     }
-    ```
-    *Note: Some clients like Claude Desktop might require `mcp-remote` if they don't support SSE directly. Refer to the Gradio MCP documentation for setup with `mcp-remote`.*
+  }
+}
+```
 
-3.  **Available Tools:**
-    The following functions are exposed as MCP tools. The descriptions and parameters are derived from their Python docstrings. You can view the full schema at `YOUR_GRADIO_APP_URL/gradio_api/mcp/schema`.
+### 🌐 **Web Interface**
+- Interactive Gradio interface for direct use
+- Real-time search with customizable filters
+- User-friendly result formatting
 
-    *   **`search_openalex_papers(search_query: str, max_results: int = 3, start_year: Optional[int] = None, end_year: Optional[int] = None)`**
-        *   Description: Searches OpenAlex for academic papers by query, with optional date filtering.
-        *   Example Usage by LLM: "Find 5 recent papers on quantum machine learning published since 2022."
+## ⚡ Quick Start
 
-    *   **`get_publication_by_doi(doi: str)`**
-        *   Description: Retrieves a specific OpenAlex publication by its DOI.
-        *   Example Usage by LLM: "Get the abstract for the paper with DOI 10.1038/s41586-021-03358-0."
+### Option 1: Use Live Demo
+Visit the [Hugging Face Space](https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool) and start searching immediately.
 
-    *   **`search_openalex_authors(author_name: str, max_results: int = 5)`**
-        *   Description: Searches OpenAlex for authors by their name.
-        *   Example Usage by LLM: "Find authors named 'Yoshua Bengio' and their affiliations."
+### Option 2: Run Locally
 
-    *   **`search_openalex_concepts(concept_name: str, max_results: int = 5)`**
-        *   Description: Searches OpenAlex for concepts (fields of study) by name.
-        *   Example Usage by LLM: "What is the OpenAlex concept ID for 'computational linguistics'?"
+```bash
+# Clone the repository
+git clone https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool
+cd openalex-mcp-tool
 
-## Development Notes
+# Install dependencies
+pip install -r requirements.txt
 
-*   **Modularity**: The application is structured with a clear separation between the Gradio UI/MCP layer (`app.py`), API client logic (`slr_modules/api_clients.py`), and specific OpenAlex data retrievers (`openalex_modules/`).
-*   **Configuration**: `ConfigManager` loads settings from `config/slr_config.yaml` and environment variables (especially `OPENALEX_EMAIL`).
-*   **Error Handling**: Basic error handling is in place, returning error messages as part of the MCP response if issues occur.
+# Set up OpenAlex API access (recommended)
+export OPENALEX_EMAIL="your-email@example.com"
 
-## Future Enhancements (Post-Hackathon Ideas)
+# Run the application
+python app.py
+```
 
-*   More advanced filtering and sorting options for paper search.
-*   Support for retrieving works by OpenAlex ID directly.
-*   Tools for exploring author collaborations or concept relationships.
-*   Pagination support for MCP tool results if a client requests more items than `max_results`.
+Access at `http://localhost:7860`
+
+## 🛠️ MCP Client Usage
+
+### Example: Search Recent AI Papers
+```python
+import asyncio
+from mcp import Client
+
+async def search_ai_papers():
+    url = "https://huggingface.co/spaces/skazo4nick/openalex-mcp-tool/gradio_api/mcp/sse"
+    
+    async with Client("sse", url=url) as client:
+        result = await client.call_tool("search_openalex_papers", {
+            "query": "large language models",
+            "from_publication_date": "2023-01-01",
+            "results_count": 5
+        })
+        
+        print(result.content[0].text)
+
+asyncio.run(search_ai_papers())
+```
+
+### Available Tools
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `search_openalex_papers` | Find academic papers | `query`, `from_publication_date`, `to_publication_date`, `results_count` |
+| `get_publication_by_doi` | Get specific paper | `doi` |
+| `search_openalex_authors` | Find researchers | `query`, `results_count` |
+| `search_openalex_concepts` | Explore topics | `query`, `results_count` |
+
+## 🎥 Demo Video
+
+🔗 [Watch the Demo Video](https://your-demo-video-link.com) *(Coming Soon)*
+
+## 🏗️ Technical Architecture
+
+- **Frontend**: Gradio 4.x with MCP support
+- **Backend**: Python with pyalex library  
+- **Protocol**: MCP via Server-Sent Events (SSE)
+- **API**: OpenAlex (free, no API key required)
+- **Deployment**: Hugging Face Spaces
+
+## 📖 Documentation
+
+For detailed documentation, see the [`docs/`](docs/) folder:
+
+- **[User Guide](docs/user-guide.md)** - Complete usage instructions
+- **[API Documentation](docs/api.md)** - MCP integration details  
+- **[Deployment Guide](docs/deployment.md)** - Setup for different platforms
+- **[Requirements Specification](docs/requirements.md)** - Detailed technical specs
+
+## 🔧 Configuration
+
+### Environment Variables
+```bash
+# Optional: Your email for OpenAlex API (recommended for better access)
+export OPENALEX_EMAIL="your-email@example.com"
+
+# Optional: Custom configuration file
+export SLR_CONFIG_PATH="/path/to/config.yaml"
+```
+
+### Dependencies
+```
+gradio[mcp]>=4.0.0
+pyalex>=0.13
+PyYAML>=6.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+```
+
+## 🌟 Use Cases
+
+### For Researchers
+- **Literature Reviews**: Search papers by topic and date range
+- **Author Discovery**: Find experts in specific fields
+- **Citation Tracking**: Get publication details by DOI
+
+### For AI Agents
+- **Research Assistant**: Enable LLMs to access academic data
+- **Fact Checking**: Verify claims against scholarly sources  
+- **Content Generation**: Enhance writing with academic references
+
+### For Developers
+- **MCP Integration**: Add research capabilities to any MCP client
+- **Data Pipeline**: Automate academic data collection
+- **Research Tools**: Build custom academic applications
+
+## 📊 Example Searches
+
+**Recent AI Research:**
+```
+Query: "transformer neural networks"
+Date: 2023-01-01 to 2024-12-31
+```
+
+**Climate Science:**
+```
+Query: "climate change adaptation"
+Authors: Search for climate researchers
+```
+
+**Medical Research:**
+```
+DOI: "10.1038/s41586-023-05881-4"
+Related concepts: "machine learning medicine"
+```
+
+## 🤝 Contributing
+
+This project is part of the **Agents & MCP Hackathon**. Contributions welcome!
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🏷️ Hackathon Tags
+
+`#mcp-server-track` `#openalex` `#academic-research` `#gradio` `#model-context-protocol`
+
+---
+
+**Built for the Agents & MCP Hackathon (June 2-10, 2025)**  
+**Track**: MCP Server Development  
+**Theme**: Enabling AI agents to access academic research data
