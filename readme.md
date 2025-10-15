@@ -168,6 +168,11 @@ For detailed documentation, see the [`docs/`](docs/) folder:
 - **[Implementation Specification](docs/reports/openalex-api-implementation-spec.md)** - Detailed technical specifications
 - **[Enhancement Summary](docs/reports/openalex-mcp-enhancement-summary.md)** - Executive summary of findings
 
+### Architecture Decision Records
+- **[ADR 001: Enhance OpenAlex MCP Implementation](docs/adr/001-enhance-openalex-mcp-implementation.md)** - Decision to expand API coverage
+- **[ADR 002: MCP Server Architecture](docs/adr/002-mcp-server-architecture.md)** - Architectural approach for MCP implementation
+- **[ADR 003: Retriever Module Implementation](docs/adr/003-retriever-module-implementation.md)** - Approach for new entity retrievers
+
 ## 🔧 Configuration
 
 ### Environment Variables
