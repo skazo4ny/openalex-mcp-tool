@@ -4,3 +4,7 @@ pyalex>=0.13
 PyYAML>=6.0
 python-dotenv>=1.0.0
 requests>=2.31.0
+# Future transition dependencies (commented out for now)
+# fastmcp>=0.1.0
+# uvicorn>=0.20.0
+# fastapi>=0.100.0

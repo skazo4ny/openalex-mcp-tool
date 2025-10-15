@@ -94,7 +94,7 @@ Access at `http://localhost:7860`
 ## 🛠️ MCP Client Usage
 
 ### Example: Search Recent AI Papers
-``python
+```python
 import asyncio
 from mcp import Client
 
@@ -173,6 +173,7 @@ For detailed documentation, see the [`docs/`](docs/) folder:
 - **[ADR 001: Enhance OpenAlex MCP Implementation](docs/adr/001-enhance-openalex-mcp-implementation.md)** - Decision to expand API coverage
 - **[ADR 002: MCP Server Architecture](docs/adr/002-mcp-server-architecture.md)** - Architectural approach for MCP implementation
 - **[ADR 003: Retriever Module Implementation](docs/adr/003-retriever-module-implementation.md)** - Approach for new entity retrievers
+- **[ADR 004: Phase 1 Implementation](docs/adr/004-phase-1-implementation.md)** - Architecture decisions for Phase 1
 
 ## 🔧 Configuration
 
@@ -275,6 +276,26 @@ Focus: Impact factor analysis
 - Bulk data retrieval operations
 - Advanced analytics and visualization
 - Timeline: To be determined
+
+## 🔄 Development Approach Update
+
+### Repository Migration
+As of this stage, we have decided to transition our development efforts to GitHub for the following reasons:
+1. **Better collaboration tools** for team development
+2. **Enhanced CI/CD capabilities** for automated testing and deployment
+3. **Improved issue tracking** and project management features
+4. **Preparation for FastMCP migration** - Our next architectural evolution
+
+### Future Architecture: FastMCP Approach
+We are planning to migrate from the current Gradio-based MCP implementation to a specialized FastMCP approach for the following benefits:
+1. **Performance Optimization**: FastMCP provides better performance for high-throughput MCP operations
+2. **Decoupled Architecture**: Separation of business logic from transport layers for better maintainability
+3. **Standard Compliance**: Better adherence to MCP specification standards
+4. **Scalability**: Improved handling of concurrent connections and requests
+
+This transition will happen in Phase 2 development, where we'll refactor the core MCP server components while maintaining API compatibility.
+
+**Note**: The Hugging Face Space will continue to host the current Gradio-based implementation for demo purposes, but active development will continue on GitHub.
 
 ## 🤝 Contributing
 
