@@ -128,6 +128,98 @@ Search for academic concepts and their relationships.
 **Response:**
 Returns concept information including name, description, level, and related works count.
 
+### 5. search_openalex_topics
+
+Search for academic topics (improved replacement for deprecated concepts).
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Topic name or search query"
+    },
+    "max_results": {
+      "type": "integer",
+      "description": "Number of results to return (1-50)",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 5
+    }
+  },
+  "required": ["query"]
+}
+```
+
+**Response:**
+Returns topic information including name, description, hierarchical structure (domain, field, subfield), keywords, and research metrics.
+
+### 6. search_openalex_institutions
+
+Search for research institutions and universities.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Institution name or search query"
+    },
+    "max_results": {
+      "type": "integer",
+      "description": "Number of results to return (1-50)",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 5
+    },
+    "country_code": {
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2 country code to filter results (e.g., 'US', 'DE')"
+    }
+  },
+  "required": ["query"]
+}
+```
+
+**Response:**
+Returns institution information including name, ROR identifier, country code, type, geographic location, and research metrics.
+
+### 7. search_openalex_sources
+
+Search for academic publication venues (journals, conferences, repositories).
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Source name or search query"
+    },
+    "max_results": {
+      "type": "integer",
+      "description": "Number of results to return (1-50)",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 5
+    },
+    "source_type": {
+      "type": "string",
+      "description": "Source type filter (e.g., 'journal', 'conference', 'repository')"
+    }
+  },
+  "required": ["query"]
+}
+```
+
+**Response:**
+Returns source information including name, ISSN, type, publisher, homepage URL, and publication metrics.
+
 ## Error Handling
 
 All MCP tools return structured error responses:
@@ -181,6 +273,45 @@ async def search_ai_papers():
 asyncio.run(search_ai_papers())
 ```
 
+### Example: Search Research Topics
+```python
+import asyncio
+from mcp import Client
+
+async def search_research_topics():
+    url = "http://localhost:7860/gradio_api/mcp/sse"
+    
+    async with Client("sse", url=url) as client:
+        result = await client.call_tool("search_openalex_topics", {
+            "query": "artificial intelligence",
+            "max_results": 5
+        })
+        
+        print(result.content[0].text)
+
+asyncio.run(search_research_topics())
+```
+
+### Example: Search Institutions by Country
+```python
+import asyncio
+from mcp import Client
+
+async def search_institutions():
+    url = "http://localhost:7860/gradio_api/mcp/sse"
+    
+    async with Client("sse", url=url) as client:
+        result = await client.call_tool("search_openalex_institutions", {
+            "query": "university",
+            "country_code": "DE",
+            "max_results": 5
+        })
+        
+        print(result.content[0].text)
+
+asyncio.run(search_institutions())
+```
+
 ### Direct Web Interface
 
 Navigate to the deployment URL and use the interactive Gradio interface to:
@@ -188,6 +319,9 @@ Navigate to the deployment URL and use the interactive Gradio interface to:
 2. Look up publications by DOI
 3. Find authors and their metrics
 4. Explore academic concepts
+5. Discover research topics
+6. Find institutions and universities
+7. Search publication venues
 
 ## Logging
 

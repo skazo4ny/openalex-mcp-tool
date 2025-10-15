@@ -64,6 +64,38 @@ Navigate to the deployment URL (e.g., your Hugging Face Spaces URL) to access th
 - `"bioinformatics"` - Interdisciplinary field
 - `"quantum computing"` - Emerging technology
 
+#### 5. Topic Search Tab
+- **Query Field**: Enter research topic
+- **Results Count**: Number of topics to return (1-50)
+- **Search Button**: Explore topics
+
+**Example Searches:**
+- `"artificial intelligence"` - Core topic
+- `"renewable energy"` - Applied research area
+- `"neuroscience"` - Scientific discipline
+
+#### 6. Institution Search Tab
+- **Query Field**: Enter institution name
+- **Results Count**: Number of institutions to return (1-50)
+- **Country Code**: Optional ISO country code filter (e.g., "US", "DE")
+- **Search Button**: Find institutions
+
+**Example Searches:**
+- `"Harvard University"` - Specific institution
+- `"Max Planck"` - Research organization
+- `"Tokyo"` - Institutions in Japan
+
+#### 7. Source Search Tab
+- **Query Field**: Enter publication venue name
+- **Results Count**: Number of sources to return (1-50)
+- **Source Type**: Optional type filter (e.g., "journal", "conference")
+- **Search Button**: Discover venues
+
+**Example Searches:**
+- `"Nature"` - Prestigious journal
+- `"NeurIPS"` - Conference
+- `"arXiv"` - Preprint repository
+
 ### Understanding Results
 
 #### Paper Search Results
@@ -92,6 +124,36 @@ Each concept result includes:
 - **Level**: Hierarchical level (0-5, where 0 is most general)
 - **Works Count**: Number of papers associated
 - **Related Concepts**: Connected academic areas
+
+#### Topic Results
+Each topic result includes:
+- **Name**: Topic name
+- **Description**: Brief explanation
+- **Domain/Field/Subfield**: Hierarchical structure
+- **Keywords**: Associated keywords
+- **Works Count**: Number of papers associated
+- **Citation Metrics**: Research impact data
+
+#### Institution Results
+Each institution result includes:
+- **Name**: Institution name
+- **Country Code**: Geographic location
+- **Type**: Institution type (education, healthcare, etc.)
+- **Works Count**: Number of published papers
+- **Citation Count**: Total citations received
+- **Geographic Location**: City and region
+- **Associated Institutions**: Related organizations
+
+#### Source Results
+Each source result includes:
+- **Name**: Publication venue name
+- **ISSN**: International Standard Serial Number
+- **Type**: Venue type (journal, conference, repository)
+- **Publisher**: Publishing organization
+- **Works Count**: Number of papers published
+- **Citation Count**: Total citations received
+- **Homepage URL**: Official website
+- **Open Access**: OA availability information
 
 ## MCP Client Integration
 
@@ -173,6 +235,35 @@ await client.call_tool("search_openalex_authors", {
 await client.call_tool("search_openalex_concepts", {
     "query": "machine learning",
     "max_results": 10
+})
+```
+
+#### search_openalex_topics
+```python
+# Explore research topics (improved replacement for concepts)
+await client.call_tool("search_openalex_topics", {
+    "query": "artificial intelligence",
+    "max_results": 10
+})
+```
+
+#### search_openalex_institutions
+```python
+# Find research institutions
+await client.call_tool("search_openalex_institutions", {
+    "query": "university",
+    "country_code": "US",
+    "max_results": 5
+})
+```
+
+#### search_openalex_sources
+```python
+# Discover publication venues
+await client.call_tool("search_openalex_sources", {
+    "query": "nature",
+    "source_type": "journal",
+    "max_results": 5
 })
 ```
 

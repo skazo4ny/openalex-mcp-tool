@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers deploying the OpenAlex Explorer MCP Server to various platforms, with specific focus on Hugging Face Spaces deployment.
+This guide covers deploying the OpenAlex Explorer MCP Server to various platforms. As of the current development stage, active development has migrated to GitHub, though Hugging Face Spaces deployment is still supported for demo purposes.
 
 ## Table of Contents
 
@@ -19,6 +19,16 @@ This guide covers deploying the OpenAlex Explorer MCP Server to various platform
 - Git
 - Access to target deployment platform
 - (Optional) Docker for containerized deployment
+
+## Repository Migration Notice
+
+**Important**: As of Phase 1 completion, active development has migrated to GitHub. The Hugging Face Space will continue to host the current Gradio-based implementation for demo purposes, but all future development will occur on GitHub.
+
+To contribute or access the latest development version:
+```bash
+git clone https://github.com/YOUR_USERNAME/openalex-mcp-tool.git
+cd openalex-mcp-tool
+```
 
 ## Hugging Face Spaces Deployment
 
@@ -88,7 +98,12 @@ The deployment will automatically start on Hugging Face Spaces.
 ### Step 1: Clone Repository
 
 ```bash
+# For latest development version (recommended)
 git clone https://github.com/YOUR_USERNAME/openalex-mcp-tool.git
+cd openalex-mcp-tool
+
+# For stable Hugging Face version (demo purposes)
+git clone https://huggingface.co/spaces/YOUR_USERNAME/openalex-mcp-tool
 cd openalex-mcp-tool
 ```
 
@@ -198,149 +213,53 @@ export SLR_CONFIG_PATH="/path/to/config.yaml"
 export LOG_LEVEL="INFO"
 
 # Optional: Override port
-export PORT="7860"
+export PORT=7860
 ```
+
+## Future Architecture: FastMCP Transition
+
+As part of our development roadmap, we are planning to transition from the current Gradio-based MCP implementation to a specialized FastMCP approach. This will provide:
+
+1. **Better Performance**: Optimized for high-throughput MCP operations
+2. **Decoupled Architecture**: Separation of business logic from transport layers
+3. **Standard Compliance**: Better adherence to MCP specification
+4. **Enhanced Scalability**: Improved handling of concurrent connections
+
+This transition will begin in Phase 2 development and will maintain API compatibility with existing clients.
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### 1. White Page on Hugging Face Spaces
-
-**Symptoms:** Deployment succeeds but shows blank page
-
-**Solutions:**
-1. Check application logs in HF Spaces interface
-2. Verify all dependencies in requirements.txt
-3. Ensure app.py doesn't have blocking operations
-4. Check Gradio version compatibility
-
-```bash
-# Check logs
-# In HF Spaces, click "Logs" tab to view runtime logs
-```
-
-#### 2. Import Errors
-
-**Symptoms:** ModuleNotFoundError or ImportError
-
-**Solutions:**
-1. Verify all modules are included in repository
-2. Check Python path configuration
-3. Ensure __init__.py files exist in module directories
-
-```bash
-# Add __init__.py files
-touch slr_modules/__init__.py
-touch openalex_modules/__init__.py
-```
-
-#### 3. Configuration Errors
-
-**Symptoms:** Application fails to start with config errors
-
-**Solutions:**
-1. Verify YAML syntax in config file
-2. Check file paths and permissions
-3. Ensure all required config sections exist
-
-```bash
-# Validate YAML syntax
-python -c "import yaml; yaml.safe_load(open('config/slr_config.yaml'))"
-```
-
-#### 4. API Rate Limiting
-
-**Symptoms:** Frequent API errors or timeouts
-
-**Solutions:**
-1. Implement request throttling
-2. Add retry logic with exponential backoff
-3. Cache frequently requested data
-
-#### 5. Memory Issues
-
-**Symptoms:** Application crashes or becomes unresponsive
-
-**Solutions:**
-1. Optimize data processing
-2. Implement pagination for large results
-3. Add memory usage monitoring
-
-### Performance Optimization
-
-1. **Enable Caching:**
-   ```python
-   # Add to app.py
-   import functools
-   
-   @functools.lru_cache(maxsize=100)
-   def cached_api_call(query, params):
-       # Your API call logic
-       pass
-   ```
-
-2. **Optimize Gradio Interface:**
-   ```python
-   # Use queue for better concurrency
-   demo.queue(concurrency_count=10)
-   ```
-
-3. **Monitor Resource Usage:**
-   ```python
-   # Add memory and CPU monitoring
-   import psutil
-   ```
-
-### Logs Analysis
-
-The application generates structured logs in `/logs` directory:
-
-- `app_YYYY-MM-DD.json` - JSON formatted logs
-
-Use log analysis tools:
-
-```bash
-# Parse JSON logs
-cat logs/app_$(date +%Y-%m-%d).json | jq '.level=="ERROR"'
-
-# Monitor real-time logs
-tail -f logs/app_$(date +%Y-%m-%d).json
-```
-
-## Monitoring and Maintenance
-
-### Health Checks
-
-Implement basic health monitoring:
-
-```python
-# Add to app.py
-@demo.get("/health")
-def health_check():
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
-```
-
-### Backup Strategy
-
-1. **Code Backup:** Use Git for version control
-2. **Configuration Backup:** Store configs in version control
-3. **Logs Backup:** Implement log archival for long-term storage
-
-### Updates and Maintenance
-
-1. **Dependency Updates:**
+1. **Port Already in Use:**
    ```bash
-   pip list --outdated
-   pip install --upgrade package_name
+   # Kill process using port 7860
+   lsof -ti:7860 | xargs kill -9
    ```
 
-2. **Configuration Updates:**
-   - Test changes in development first
-   - Use gradual rollout for production changes
-   - Monitor application behavior after updates
+2. **Dependency Installation Issues:**
+   ```bash
+   # Upgrade pip
+   pip install --upgrade pip
+   
+   # Install with no cache
+   pip install --no-cache-dir -r requirements.txt
+   ```
 
-3. **Log Rotation:**
-   - Automatic daily rotation configured
-   - Manual cleanup of old logs if needed
-   - Monitor disk usage in deployment environment
+3. **API Rate Limiting:**
+   ```bash
+   # Set your email for better API access
+   export OPENALEX_EMAIL="your-email@example.com"
+   ```
+
+### Logs and Debugging
+
+Check logs in the `logs/` directory for detailed error information:
+```bash
+tail -f logs/openalex_mcp.log
+```
+
+For development debugging, set the log level to DEBUG:
+```bash
+export LOG_LEVEL="DEBUG"
+```
