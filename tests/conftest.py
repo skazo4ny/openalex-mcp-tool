@@ -131,6 +131,95 @@ def mock_concept_response():
         ]
     }
 
+# Add new fixtures for the new entity types
+@pytest.fixture
+def mock_topic_response():
+    """Mock OpenAlex topic response."""
+    return {
+        "id": "https://openalex.org/T123456789",
+        "display_name": "Machine Learning",
+        "description": "A subset of artificial intelligence",
+        "works_count": 150000,
+        "cited_by_count": 2500000,
+        "subfield_count": 12,
+        "created_date": "2023-01-01",
+        "domain": {
+            "id": "https://openalex.org/D123",
+            "display_name": "Computer Science"
+        },
+        "field": {
+            "id": "https://openalex.org/F456",
+            "display_name": "Artificial Intelligence"
+        },
+        "subfield": {
+            "id": "https://openalex.org/S789",
+            "display_name": "Machine Learning"
+        },
+        "keywords": ["neural networks", "deep learning", "supervised learning"],
+        "counts_by_year": [
+            {"year": 2022, "works_count": 15000, "cited_by_count": 250000},
+            {"year": 2023, "works_count": 20000, "cited_by_count": 300000}
+        ]
+    }
+
+@pytest.fixture
+def mock_institution_response():
+    """Mock OpenAlex institution response."""
+    return {
+        "id": "https://openalex.org/I123456789",
+        "display_name": "Harvard University",
+        "ror": "https://ror.org/0000-0000-0000-0000",
+        "country_code": "US",
+        "type": "education",
+        "works_count": 150000,
+        "cited_by_count": 2500000,
+        "homepage_url": "https://www.harvard.edu",
+        "geo": {
+            "city": "Cambridge",
+            "region": "Massachusetts",
+            "country": "United States",
+            "latitude": 42.3770,
+            "longitude": -71.1167
+        },
+        "associated_institutions": [
+            {
+                "id": "https://openalex.org/I987654321",
+                "display_name": "Harvard Medical School",
+                "relationship": "related"
+            }
+        ],
+        "counts_by_year": [
+            {"year": 2022, "works_count": 15000, "cited_by_count": 250000},
+            {"year": 2023, "works_count": 20000, "cited_by_count": 300000}
+        ]
+    }
+
+@pytest.fixture
+def mock_source_response():
+    """Mock OpenAlex source response."""
+    return {
+        "id": "https://openalex.org/S123456789",
+        "display_name": "Nature",
+        "issn_l": "1234-5678",
+        "type": "journal",
+        "publisher": "Nature Publishing Group",
+        "works_count": 150000,
+        "cited_by_count": 2500000,
+        "homepage_url": "https://www.nature.com",
+        "is_in_doaj": True,
+        "is_oa": False,
+        "issn": ["1234-5678", "9876-5432"],
+        "host_organization": "https://openalex.org/P123456789",
+        "host_organization_name": "Springer Nature",
+        "counts_by_year": [
+            {"year": 2022, "works_count": 15000, "cited_by_count": 250000},
+            {"year": 2023, "works_count": 20000, "cited_by_count": 300000}
+        ],
+        "summary_stats": {
+            "2yr_mean_citedness": 42.5
+        }
+    }
+
 @pytest.fixture
 def mock_search_response(mock_work_response):
     """Mock OpenAlex search response."""
@@ -161,6 +250,25 @@ def concept_retriever(api_client):
     """OpenAlexConceptRetriever fixture."""
     from openalex_modules.openalex_concept_retriever import OpenAlexConceptRetriever
     return OpenAlexConceptRetriever(api_client)
+
+# Add new fixtures for the new retriever modules
+@pytest.fixture
+def topic_retriever(api_client):
+    """OpenAlexTopicRetriever fixture."""
+    from openalex_modules.openalex_topic_retriever import OpenAlexTopicRetriever
+    return OpenAlexTopicRetriever(api_client)
+
+@pytest.fixture
+def institution_retriever(api_client):
+    """OpenAlexInstitutionRetriever fixture."""
+    from openalex_modules.openalex_institution_retriever import OpenAlexInstitutionRetriever
+    return OpenAlexInstitutionRetriever(api_client)
+
+@pytest.fixture
+def source_retriever(api_client):
+    """OpenAlexSourceRetriever fixture."""
+    from openalex_modules.openalex_source_retriever import OpenAlexSourceRetriever
+    return OpenAlexSourceRetriever(api_client)
 
 @pytest.fixture
 def mock_publication_results():
@@ -230,19 +338,3 @@ def mock_concept_results():
         }
     ]
 
-@pytest.fixture 
-def mock_work_response():
-    """Mock single work response with complete data."""
-    return {
-        'title': 'Test Paper',
-        'doi': '10.1038/nature12373',
-        'abstract': 'This is a comprehensive test abstract for the paper',
-        'authors': [
-            {'display_name': 'Test Author', 'orcid': '0000-0000-0000-0000'}
-        ],
-        'publication_year': 2023,
-        'cited_by_count': 100,
-        'openalex_id': 'W2741809807',
-        'venue': {'display_name': 'Nature'},
-        'open_access': {'is_oa': True}
-    }

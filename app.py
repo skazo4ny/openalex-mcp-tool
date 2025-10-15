@@ -19,6 +19,9 @@ from slr_modules.logger import get_logger, setup_logging
 from openalex_modules.openalex_publication_retriever import OpenAlexPublicationRetriever
 from openalex_modules.openalex_author_retriever import OpenAlexAuthorRetriever
 from openalex_modules.openalex_concept_retriever import OpenAlexConceptRetriever
+from openalex_modules.openalex_topic_retriever import OpenAlexTopicRetriever
+from openalex_modules.openalex_institution_retriever import OpenAlexInstitutionRetriever
+from openalex_modules.openalex_source_retriever import OpenAlexSourceRetriever
 
 # Set up enhanced logging
 logger = setup_logging("openalex_mcp", "logs")
@@ -48,6 +51,9 @@ try:
     publication_retriever = OpenAlexPublicationRetriever(api_client)
     author_retriever = OpenAlexAuthorRetriever(api_client)
     concept_retriever = OpenAlexConceptRetriever(api_client)
+    topic_retriever = OpenAlexTopicRetriever(api_client)
+    institution_retriever = OpenAlexInstitutionRetriever(api_client)
+    source_retriever = OpenAlexSourceRetriever(api_client)
     
     logger.info("All components initialized successfully")
     
@@ -297,6 +303,182 @@ def search_openalex_concepts(concept_name: str, max_results: int = 5) -> List[Di
         return []
 
 
+# Add the new MCP tool functions for Topics
+def search_openalex_topics(topic_name: str, max_results: int = 5) -> List[Dict[str, Any]]:
+    """
+    Explore academic topics in OpenAlex (improved replacement for deprecated Concepts).
+    
+    This tool provides access to OpenAlex's new Topics entity, which offers more 
+    accurate and focused research categorization than the deprecated Concepts.
+    Topics are organized in a hierarchical structure: domain → field → subfield → topic.
+    
+    Args:
+        topic_name: Name of the research topic to search for.
+                   Examples: "artificial intelligence", "molecular biology", 
+                   "climate science", "quantum computing", "public health"
+        max_results: Number of topic results to return (1-20). Default is 5.
+                    Higher values show related and broader/narrower topics.
+    
+    Returns:
+        List of topic dictionaries containing display name, description,
+        hierarchical structure (domain, field, subfield), keywords, work count, 
+        citation count, and topic relationships. Helps map precise research landscapes.
+        
+    Examples:
+        - search_openalex_topics("machine learning", 5)
+        - search_openalex_topics("renewable energy", 10)
+        - search_openalex_topics("neuroscience", 3)
+    """
+    start_time = time.time()
+    args = {'topic_name': topic_name, 'max_results': max_results}
+    
+    logger.info(f"MCP Tool called: search_openalex_topics", **args)
+    
+    try:
+        results = topic_retriever.search_topics(
+            name=topic_name,
+            max_results=max_results
+        )
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_topics", duration,
+                              results_count=len(results) if results else 0)
+        
+        logger.log_mcp_call("search_openalex_topics", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(results) if results else 0
+        })
+        
+        return results or []
+        
+    except Exception as e:
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_topics", duration, error=True)
+        logger.log_mcp_call("search_openalex_topics", args, error=str(e))
+        logger.log_error(e, "search_openalex_topics")
+        return []
+
+
+# Add the new MCP tool functions for Institutions
+def search_openalex_institutions(institution_name: str, max_results: int = 5, country_code: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Search for research institutions and universities in OpenAlex.
+    
+    This tool helps you find academic institutions, universities, and research 
+    organizations. Use it to analyze research networks, map geographic research 
+    distribution, or connect authors to their institutional affiliations.
+    
+    Args:
+        institution_name: Name of the institution to search for.
+                         Examples: "Harvard University", "Max Planck Institute", 
+                         "Stanford", "MIT", "University of Tokyo"
+        max_results: Number of institution results to return (1-20). Default is 5.
+                    Higher values for broader institutional searches.
+        country_code: Optional ISO 3166-1 alpha-2 country code to filter results.
+                     Examples: "US", "GB", "DE", "JP", "CA"
+    
+    Returns:
+        List of institution dictionaries containing display name, ROR identifier,
+        country code, type, geographic location, associated institutions, 
+        publication count, citation count, and research metrics.
+        
+    Examples:
+        - search_openalex_institutions("Harvard", 3)
+        - search_openalex_institutions("Max Planck", 5, "DE")
+        - search_openalex_institutions("University of Tokyo", 3, "JP")
+    """
+    start_time = time.time()
+    args = {'institution_name': institution_name, 'max_results': max_results, 'country_code': country_code}
+    
+    logger.info(f"MCP Tool called: search_openalex_institutions", **args)
+    
+    try:
+        results = institution_retriever.search_institutions(
+            name=institution_name,
+            max_results=max_results,
+            country_code=country_code
+        )
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_institutions", duration,
+                              results_count=len(results) if results else 0)
+        
+        logger.log_mcp_call("search_openalex_institutions", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(results) if results else 0
+        })
+        
+        return results or []
+        
+    except Exception as e:
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_institutions", duration, error=True)
+        logger.log_mcp_call("search_openalex_institutions", args, error=str(e))
+        logger.log_error(e, "search_openalex_institutions")
+        return []
+
+
+# Add the new MCP tool functions for Sources
+def search_openalex_sources(source_name: str, max_results: int = 5, source_type: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Search for academic publication venues (journals, conferences, repositories) in OpenAlex.
+    
+    This tool helps you discover and analyze publication venues where research 
+    is published. Use it to assess journal reputation, compare conference venues,
+    or analyze publishing patterns and open access availability.
+    
+    Args:
+        source_name: Name of the publication venue to search for.
+                    Examples: "Nature", "Science", "NeurIPS", "arXiv", "The Lancet"
+        max_results: Number of source results to return (1-20). Default is 5.
+                    Higher values for broader venue searches.
+        source_type: Optional source type filter. Valid values: "journal", "conference", 
+                    "repository", "ebook platform"
+    
+    Returns:
+        List of source dictionaries containing display name, ISSN, type, publisher,
+        homepage URL, publication count, citation count, impact metrics, and 
+        open access information.
+        
+    Examples:
+        - search_openalex_sources("Nature", 3)
+        - search_openalex_sources("NeurIPS", 5, "conference")
+        - search_openalex_sources("arXiv", 3, "repository")
+    """
+    start_time = time.time()
+    args = {'source_name': source_name, 'max_results': max_results, 'source_type': source_type}
+    
+    logger.info(f"MCP Tool called: search_openalex_sources", **args)
+    
+    try:
+        results = source_retriever.search_sources(
+            name=source_name,
+            max_results=max_results,
+            source_type=source_type
+        )
+        
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_sources", duration,
+                              results_count=len(results) if results else 0)
+        
+        logger.log_mcp_call("search_openalex_sources", args, {
+            'success': True,
+            'results_count': len(results) if results else 0,
+            'response_length': len(results) if results else 0
+        })
+        
+        return results or []
+        
+    except Exception as e:
+        duration = time.time() - start_time
+        logger.log_performance("search_openalex_sources", duration, error=True)
+        logger.log_mcp_call("search_openalex_sources", args, error=str(e))
+        logger.log_error(e, "search_openalex_sources")
+        return []
+
+
 def format_paper_results(papers: List[Dict[str, Any]]) -> str:
     """Format paper search results for display."""
     if not papers:
@@ -481,6 +663,9 @@ def create_gradio_interface():
         2. **get_publication_by_doi** - Retrieve specific publications by DOI  
         3. **search_openalex_authors** - Find researchers and authors by name
         4. **search_openalex_concepts** - Explore research topics and fields of study
+        5. **search_openalex_topics** - Explore academic research topics (improved replacement for concepts)
+        6. **search_openalex_institutions** - Find research institutions and universities
+        7. **search_openalex_sources** - Discover publication venues (journals, conferences)
         
         ### ⚙️ Claude Desktop Configuration
         Add this to your Claude Desktop MCP settings:
@@ -512,6 +697,9 @@ def create_gradio_interface():
         - *"Find authors working on climate change research"* 
         - *"Get publication details for DOI 10.1038/nature12373"*
         - *"Explore concepts related to artificial intelligence"*
+        - *"Find research topics in machine learning"*
+        - *"Search for institutions in Germany"*
+        - *"Find journals related to artificial intelligence"*
         """)
     
     return app

@@ -49,7 +49,7 @@ class OpenAlexAPIClient:
         
         self.session.headers.update(headers)
     
-    def _make_request(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _make_request(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
         """
         Make a request to the OpenAlex API with retry logic.
         
@@ -58,7 +58,7 @@ class OpenAlexAPIClient:
             params: Query parameters
         
         Returns:
-            JSON response data
+            JSON response data or None if request fails
         
         Raises:
             requests.RequestException: If request fails after retries
@@ -87,7 +87,7 @@ class OpenAlexAPIClient:
                     time.sleep(wait_time)
     
     def search_works(self, query: str, filters: Optional[Dict[str, Any]] = None, 
-                    per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
+                    per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
         """
         Search for works (publications) in OpenAlex.
         
@@ -155,7 +155,7 @@ class OpenAlexAPIClient:
             raise
     
     def search_authors(self, query: str, filters: Optional[Dict[str, Any]] = None,
-                      per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
+                      per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
         """
         Search for authors in OpenAlex.
         
@@ -189,7 +189,7 @@ class OpenAlexAPIClient:
         return self._make_request('/authors', params)
     
     def search_concepts(self, query: str, filters: Optional[Dict[str, Any]] = None,
-                       per_page: Optional[int] = None, page: int = 1) -> Dict[str, Any]:
+                       per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
         """
         Search for concepts in OpenAlex.
         
@@ -222,7 +222,7 @@ class OpenAlexAPIClient:
         
         return self._make_request('/concepts', params)
     
-    def get_multiple_works(self, openalex_ids: List[str]) -> Dict[str, Any]:
+    def get_multiple_works(self, openalex_ids: List[str]) -> Optional[Dict[str, Any]]:
         """
         Get multiple works by their OpenAlex IDs.
         
@@ -237,3 +237,168 @@ class OpenAlexAPIClient:
         }
         
         return self._make_request('/works', params)
+
+    def search_topics(self, query: str, filters: Optional[Dict[str, Any]] = None,
+                     per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
+        """
+        Search for topics in OpenAlex.
+        
+        Args:
+            query: Search query string
+            filters: Additional filters to apply
+            per_page: Number of results per page
+            page: Page number
+        
+        Returns:
+            Search results from OpenAlex
+        """
+        params = {
+            'search': query,
+            'page': page,
+            'per-page': min(per_page or self.default_per_page, self.max_per_page)
+        }
+        
+        # Add filters
+        if filters:
+            filter_strings = []
+            for key, value in filters.items():
+                if isinstance(value, list):
+                    filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                else:
+                    filter_strings.append(f"{key}:{value}")
+            
+            if filter_strings:
+                params['filter'] = ','.join(filter_strings)
+        
+        return self._make_request('/topics', params)
+    
+    def get_topic_by_id(self, topic_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a specific topic by its ID.
+        
+        Args:
+            topic_id: Topic OpenAlex ID
+        
+        Returns:
+            Topic data or None if not found
+        """
+        try:
+            response = self._make_request(f'/topics/{topic_id}')
+            return response
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                logger.warning(f"Topic with ID {topic_id} not found")
+                return None
+            raise
+    
+    def search_institutions(self, query: str, filters: Optional[Dict[str, Any]] = None,
+                           per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
+        """
+        Search for institutions in OpenAlex.
+        
+        Args:
+            query: Search query string
+            filters: Additional filters to apply
+            per_page: Number of results per page
+            page: Page number
+        
+        Returns:
+            Search results from OpenAlex
+        """
+        params = {
+            'search': query,
+            'page': page,
+            'per-page': min(per_page or self.default_per_page, self.max_per_page)
+        }
+        
+        # Add filters
+        if filters:
+            filter_strings = []
+            for key, value in filters.items():
+                if isinstance(value, list):
+                    filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                else:
+                    filter_strings.append(f"{key}:{value}")
+            
+            if filter_strings:
+                params['filter'] = ','.join(filter_strings)
+        
+        return self._make_request('/institutions', params)
+    
+    def get_institution_by_ror(self, ror_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a specific institution by its ROR ID.
+        
+        Args:
+            ror_id: Institution ROR ID
+        
+        Returns:
+            Institution data or None if not found
+        """
+        try:
+            # Ensure ROR ID has proper format
+            if not ror_id.startswith('https://ror.org/'):
+                if ror_id.startswith('ror:'):
+                    ror_id = ror_id[4:]
+                ror_id = f"https://ror.org/{ror_id}"
+            
+            response = self._make_request(f'/institutions/{ror_id}')
+            return response
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                logger.warning(f"Institution with ROR ID {ror_id} not found")
+                return None
+            raise
+    
+    def search_sources(self, query: str, filters: Optional[Dict[str, Any]] = None,
+                      per_page: Optional[int] = None, page: int = 1) -> Optional[Dict[str, Any]]:
+        """
+        Search for sources (journals, conferences, etc.) in OpenAlex.
+        
+        Args:
+            query: Search query string
+            filters: Additional filters to apply
+            per_page: Number of results per page
+            page: Page number
+        
+        Returns:
+            Search results from OpenAlex
+        """
+        params = {
+            'search': query,
+            'page': page,
+            'per-page': min(per_page or self.default_per_page, self.max_per_page)
+        }
+        
+        # Add filters
+        if filters:
+            filter_strings = []
+            for key, value in filters.items():
+                if isinstance(value, list):
+                    filter_strings.append(f"{key}:{'+'.join(map(str, value))}")
+                else:
+                    filter_strings.append(f"{key}:{value}")
+            
+            if filter_strings:
+                params['filter'] = ','.join(filter_strings)
+        
+        return self._make_request('/sources', params)
+    
+    def get_source_by_issn(self, issn: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a specific source by its ISSN.
+        
+        Args:
+            issn: Source ISSN
+        
+        Returns:
+            Source data or None if not found
+        """
+        try:
+            response = self._make_request(f'/sources/{issn}')
+            return response
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                logger.warning(f"Source with ISSN {issn} not found")
+                return None
+            raise
