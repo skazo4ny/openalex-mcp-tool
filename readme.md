@@ -16,11 +16,11 @@ tags:
   - gradio
 ---
 
-# 📚 OpenAlex Explorer MCP Server
+# 📚 OpenAlex Explorer MCP Server - Enhanced Edition
 
 **🏆 Agents & MCP Hackathon Submission (June 2-10, 2025)**
 
-A dual-purpose application that provides both a **Gradio web interface** and **MCP (Model Context Protocol) server** for accessing academic research data from the OpenAlex API. Perfect for AI agents that need to search papers, authors, and academic concepts.
+An enhanced dual-purpose application that provides both a **Gradio web interface** and **MCP (Model Context Protocol) server** for accessing comprehensive academic research data from the OpenAlex API. Extended with additional entity types, advanced filtering capabilities, and analytical tools for more sophisticated research workflows.
 
 ## 🚀 Live Demo
 
@@ -29,11 +29,26 @@ A dual-purpose application that provides both a **Gradio web interface** and **M
 
 ## 🎯 Core Features
 
-### 🔍 **Four MCP Tools**
+### 🔍 **MCP Tools**
+#### Core Tools
 1. **`search_openalex_papers`** - Search academic papers with date filtering
 2. **`get_publication_by_doi`** - Retrieve specific publications by DOI  
 3. **`search_openalex_authors`** - Find authors and their metrics
 4. **`search_openalex_concepts`** - Explore academic concepts and fields
+
+#### Phase 1 Enhanced Tools
+5. **`search_openalex_topics`** - Explore academic topics (improved replacement for concepts)
+6. **`search_openalex_institutions`** - Find research institutions and universities
+7. **`search_openalex_sources`** - Discover publication venues (journals, conferences)
+
+#### Phase 2 Advanced Tools
+8. **`group_openalex_works`** - Group publications for statistical analysis
+9. **`advanced_search`** - Complex queries with boolean operators
+
+#### Phase 3 Additional Tools
+10. **`search_openalex_publishers`** - Find academic publishers
+11. **`search_openalex_funders`** - Discover research funding organizations
+12. **`bulk_retrieve_works`** - Efficiently retrieve large datasets
 
 ### 🤖 **MCP Integration**
 Connect your AI agents to academic research:
@@ -100,12 +115,27 @@ asyncio.run(search_ai_papers())
 
 ### Available Tools
 
+#### Core Tools
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `search_openalex_papers` | Find academic papers | `query`, `start_year`, `end_year`, `max_results` |
 | `get_publication_by_doi` | Get specific paper | `doi` |
 | `search_openalex_authors` | Find researchers | `query`, `max_results` |
 | `search_openalex_concepts` | Explore topics | `query`, `max_results` |
+
+#### Phase 1 Enhanced Tools
+| `search_openalex_topics` | Explore research topics | `topic_name`, `max_results` |
+| `search_openalex_institutions` | Find universities and institutions | `institution_name`, `max_results` |
+| `search_openalex_sources` | Discover publication venues | `source_name`, `max_results` |
+
+#### Phase 2 Advanced Tools
+| `group_openalex_works` | Analyze research trends | `group_by`, `filter_query` |
+| `advanced_search` | Complex research queries | `query`, `search_fields` |
+
+#### Phase 3 Additional Tools
+| `search_openalex_publishers` | Find academic publishers | `publisher_name`, `max_results` |
+| `search_openalex_funders` | Discover funding organizations | `funder_name`, `max_results` |
+| `bulk_retrieve_works` | Retrieve large datasets | `query`, `max_results` |
 
 ## 🎥 Demo Video
 
@@ -127,6 +157,16 @@ For detailed documentation, see the [`docs/`](docs/) folder:
 - **[API Documentation](docs/api.md)** - MCP integration details  
 - **[Deployment Guide](docs/deployment.md)** - Setup for different platforms
 - **[Requirements Specification](docs/requirements.md)** - Detailed technical specs
+
+### Implementation Plans
+- **[Phase 1 Enhancements](docs/plan/phase-1-enhancements.md)** - High-priority entity implementations
+- **[Phase 2 Enhancements](docs/plan/phase-2-enhancements.md)** - Advanced features and analytics
+- **[Phase 3 Enhancements](docs/plan/phase-3-enhancements.md)** - Additional entities and bulk operations
+
+### Reports
+- **[Gap Analysis](docs/reports/openalex-api-mcp-gap-analysis.md)** - Comparison of API capabilities vs. current implementation
+- **[Implementation Specification](docs/reports/openalex-api-implementation-spec.md)** - Detailed technical specifications
+- **[Enhancement Summary](docs/reports/openalex-mcp-enhancement-summary.md)** - Executive summary of findings
 
 ## 🔧 Configuration
 
